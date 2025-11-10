@@ -25,7 +25,11 @@ def main(args):
     # Load AG News dataset
     logger.info("Loading AG News dataset")
     dataset = load_dataset("ag_news")
-    train_dataset = dataset['train']
+
+    split_train_dataset = dataset['train'].train_test_split(test_size=0.2, seed=42)
+    
+    train_dataset = split_train_dataset['train']
+    validation_dataset = split_train_dataset['test']
     test_dataset = dataset['test']
 
     # Load the tokenizer and model
@@ -50,8 +54,10 @@ def main(args):
 
     logger.info("Tokenizing datasets")
     tokenized_train_dataset = train_dataset.map(preprocess_function, batched=True)
+    tokenized_validation_dataset = validation_dataset.map(preprocess_function, batched=True)
     tokenized_test_dataset = test_dataset.map(preprocess_function, batched=True)
     tokenized_train_dataset = tokenized_train_dataset.rename_column("label", "labels")
+    tokenized_validation_dataset = tokenized_validation_dataset.rename_column("label", "labels")
     tokenized_test_dataset = tokenized_test_dataset.rename_column("label", "labels")
 
     # Define training arguments (respect CLI feature flags)
@@ -90,7 +96,7 @@ def main(args):
         model=model,
         args=training_args,
         train_dataset=tokenized_train_dataset,
-        eval_dataset=tokenized_test_dataset,
+        eval_dataset=tokenized_validation_dataset,
         compute_metrics=compute_metrics,
         callbacks=callbacks,
     )
@@ -127,3 +133,4 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
