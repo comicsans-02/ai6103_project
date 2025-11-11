@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('--train-batch-size', type=int, default=8, help='Per-device train batch size')
     parser.add_argument('--eval-batch-size', type=int, default=8, help='Per-device eval batch size')
     parser.add_argument('--epochs', type=int, default=5, help='Number of training epochs')
-    parser.add_argument('--weight-decay, type=float, default=0.1, help='Weight decay')
+    parser.add_argument('--weight-decay', type=float, default=0.1, help='Weight decay')
     parser.add_argument('--optimizer', default='adamw_torch', help='Optimizer type, for valid values refer to OptimizerNames in https://github.com/huggingface/transformers/blob/main/src/transformers/training_args.py')
     return parser.parse_args()
 
@@ -239,4 +239,5 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
 
