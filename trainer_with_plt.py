@@ -15,6 +15,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    # Note: The below default values are the default values of the Trainer class, which is the commonly used values.
+    # For baseline with no regularization and optimization techniques update the values to the following:
+    # --override-dropout = True
+    # --dropout = 0.0
+    # --weight-decay = 0.0
+    # --optimizer = 'sgd'
+    
     parser = argparse.ArgumentParser(description='Train RoBERTa on AG News with feature flags')
     parser.add_argument('--override-dropout', action='store_true', help='Override dropout via config')
     parser.add_argument('--dropout', type=float, default=0.2, help='Dropout probability to set when overriding')
@@ -24,6 +31,8 @@ def parse_args():
     parser.add_argument('--train-batch-size', type=int, default=8, help='Per-device train batch size')
     parser.add_argument('--eval-batch-size', type=int, default=8, help='Per-device eval batch size')
     parser.add_argument('--epochs', type=int, default=5, help='Number of training epochs')
+    parser.add_argument('--weight-decay, type=float, default=0.1, help='Weight decay')
+    parser.add_argument('--optimizer', default='adamw_torch', help='Optimizer type, for valid values refer to OptimizerNames in https://github.com/huggingface/transformers/blob/main/src/transformers/training_args.py')
     return parser.parse_args()
 
 def main(args):
@@ -77,13 +86,14 @@ def main(args):
         per_device_train_batch_size=args.train_batch_size,
         per_device_eval_batch_size=args.eval_batch_size,
         num_train_epochs=args.epochs,
-        weight_decay=0.01,
+        weight_decay=args.weight_decay,
         logging_dir='./logs',
         save_total_limit=3,
         load_best_model_at_end=True,
         metric_for_best_model="accuracy",
         fp16=args.fp16,
-        greater_is_better=True
+        greater_is_better=True,
+        optim=args.optimizer
     )
 
     # Define a function to compute desired metrics
@@ -229,3 +239,4 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
