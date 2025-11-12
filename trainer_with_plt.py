@@ -1,7 +1,7 @@
 import logging
 import argparse
 import os
-from transformers import RobertaTokenizer, RobertaForSequenceClassification, Trainer, TrainingArguments, EarlyStoppingCallback, RobertaConfig, TrainerCallback
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, Trainer, TrainingArguments, EarlyStoppingCallback, DistilBertConfig, TrainerCallback
 from datasets import load_dataset
 import evaluate
 import numpy as np
@@ -49,18 +49,18 @@ def main(args):
 
     # Load the tokenizer and model
     logger.info("Loading tokenizer and model")
-    tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     if args.override_dropout:
         logger.info(f"Overriding dropout in config to {args.dropout}")
-        config = RobertaConfig.from_pretrained(
-            'roberta-base',
+        config = DistilBertConfig.from_pretrained(
+            'distilbert-base-uncased',
             hidden_dropout_prob=args.dropout,
             attention_probs_dropout_prob=args.dropout,
         )
         config.num_labels = 4
-        model = RobertaForSequenceClassification.from_pretrained('roberta-base', config=config)
+        model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', config=config)
     else:
-        model = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=4)
+        model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=4)
 
     # Preprocess the data
     def preprocess_function(examples):
@@ -93,7 +93,8 @@ def main(args):
         metric_for_best_model="accuracy",
         fp16=args.fp16,
         greater_is_better=True,
-        optim=args.optimizer
+        optim=args.optimizer,
+        report_to="none"
     )
 
     # Define a function to compute desired metrics
@@ -239,6 +240,7 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
 
 
 
