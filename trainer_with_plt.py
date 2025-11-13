@@ -56,6 +56,8 @@ def main(args):
             'distilbert-base-uncased',
             dropout=args.dropout,
             attention_dropout =args.dropout,
+            qa_dropout=args.dropout,
+            seq_classif_dropout = args.dropout
         )
         config.num_labels = 4
         model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', config=config)
@@ -240,6 +242,7 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
 
 
 
