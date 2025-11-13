@@ -54,8 +54,8 @@ def main(args):
         logger.info(f"Overriding dropout in config to {args.dropout}")
         config = DistilBertConfig.from_pretrained(
             'distilbert-base-uncased',
-            hidden_dropout_prob=args.dropout,
-            attention_probs_dropout_prob=args.dropout,
+            dropout=args.dropout,
+            attention_dropout =args.dropout,
         )
         config.num_labels = 4
         model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', config=config)
@@ -240,6 +240,7 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
 
 
 
