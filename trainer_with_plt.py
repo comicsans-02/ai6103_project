@@ -52,17 +52,19 @@ def main(args):
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     if args.override_dropout:
         logger.info(f"Overriding dropout in config to {args.dropout}")
-        config = DistilBertConfig.from_pretrained(
-            'distilbert-base-uncased',
+        config = DistilBertConfig(
             dropout=args.dropout,
             attention_dropout =args.dropout,
             qa_dropout=args.dropout,
-            seq_classif_dropout = args.dropout
+            seq_classif_dropout = args.dropout,
+            vocab_size=tokenizer.vocab_size,
         )
         config.num_labels = 4
-        model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', config=config)
+        model = DistilBertForSequenceClassification(config=config)
     else:
-        model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=4)
+        config = DistilBertConfig(vocab_size=tokenizer.vocab_size)
+        config.num_labels = 4
+        model = DistilBertForSequenceClassification(config=config)
 
     # Preprocess the data
     def preprocess_function(examples):
@@ -191,8 +193,8 @@ def main(args):
         logger.error(f"An error occurred during training: {e}")
         raise
 
-    test_metrics = trainer.evaluate(eval_dataset=tokenized_holdout_test_dataset, metric_key_prefix="test")
-    print(test_metrics)
+    valuation_metrics = trainer.evaluate(eval_dataset=tokenized_val_dataset, metric_key_prefix="valuation")
+    print(valuation_metrics)
 
 
     logs = trainer.state.log_history
@@ -242,6 +244,7 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     main(args)
+
 
 
 
