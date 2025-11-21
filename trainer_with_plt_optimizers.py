@@ -151,7 +151,7 @@ def train_with_optimizer(optimizer_name, args, train_dataset, val_dataset, test_
         logger.error(f"An error occurred during training: {e}")
         raise
     
-    valuation_metrics = trainer.evaluate(eval_dataset=val_dataset, metric_key_prefix="valuation")
+    valuation_metrics = trainer.evaluate(eval_dataset=val_dataset, metric_key_prefix="eval")
     print(f"{optimizer_name} valuation metrics:", valuation_metrics)
     
     logs = trainer.state.log_history

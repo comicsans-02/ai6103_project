@@ -193,7 +193,7 @@ def main(args):
         logger.error(f"An error occurred during training: {e}")
         raise
 
-    valuation_metrics = trainer.evaluate(eval_dataset=tokenized_val_dataset, metric_key_prefix="valuation")
+    valuation_metrics = trainer.evaluate(eval_dataset=tokenized_val_dataset, metric_key_prefix="eval")
     print(valuation_metrics)
 
 
